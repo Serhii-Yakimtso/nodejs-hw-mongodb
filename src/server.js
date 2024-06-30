@@ -31,19 +31,19 @@ export const startServer = () => {
 
   app.get('/contacts/:contactId', async (req, res) => {
     try {
-      const { id } = req.params;
-      const data = await getContactById(id);
+      const { contactId } = req.params;
+      const data = await getContactById(contactId);
 
       if (!data) {
         return res.status(404).json({
-          message: `Contact with id ${id} not found`,
+          message: `Contact with id ${contactId} not found`,
         });
       }
 
       res.json({
         status: 200,
         data,
-        message: `Successfully found contact with id ${id}!`,
+        message: `Successfully found contact with id ${contactId}!`,
       });
     } catch (error) {
       if (error.message.includes('Cast to ObjectId failed')) {
