@@ -3,6 +3,7 @@ import ctrlWrapper from '../utils/ctrlWrapper.js';
 import {
   getAllContactsController,
   getAllContactsByIdController,
+  addContactController,
 } from '../controllers/contacts.js';
 import isValidId from '../middlewares/isValidId.js';
 
@@ -15,5 +16,7 @@ contactsRouter.get(
   isValidId,
   ctrlWrapper(getAllContactsByIdController),
 );
+
+contactsRouter.post('/', ctrlWrapper(addContactController));
 
 export default contactsRouter;

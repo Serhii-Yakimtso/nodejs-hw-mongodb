@@ -21,7 +21,7 @@ export const startServer = () => {
   app.use(cors());
   app.use(express.json());
 
-  app.get('/contacts', contactsRouter);
+  app.use('/contacts', contactsRouter);
 
   app.use('*', notFoundHandler);
   app.use(errorHandler);
