@@ -5,6 +5,8 @@ import {
   getAllContactsByIdController,
   addContactController,
   updateContactController,
+  patchContactController,
+  deleteContactController,
 } from '../controllers/contacts.js';
 import isValidId from '../middlewares/isValidId.js';
 
@@ -24,6 +26,18 @@ contactsRouter.put(
   '/:contactId',
   isValidId,
   ctrlWrapper(updateContactController),
+);
+
+contactsRouter.patch(
+  '/:contactId',
+  isValidId,
+  ctrlWrapper(patchContactController),
+);
+
+contactsRouter.delete(
+  '/:contactId',
+  isValidId,
+  ctrlWrapper(deleteContactController),
 );
 
 export default contactsRouter;

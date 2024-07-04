@@ -22,3 +22,5 @@ export const upsertContact = async (filter, data, options = {}) => {
     isNew,
   };
 };
+
+export const deleteContact = (filter) => Contact.findOneAndDelete(filter);
