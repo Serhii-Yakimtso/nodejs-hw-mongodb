@@ -4,6 +4,7 @@ import {
   getAllContactsController,
   getAllContactsByIdController,
   addContactController,
+  updateContactController,
 } from '../controllers/contacts.js';
 import isValidId from '../middlewares/isValidId.js';
 
@@ -18,5 +19,11 @@ contactsRouter.get(
 );
 
 contactsRouter.post('/', ctrlWrapper(addContactController));
+
+contactsRouter.put(
+  '/:contactId',
+  isValidId,
+  ctrlWrapper(updateContactController),
+);
 
 export default contactsRouter;

@@ -3,6 +3,7 @@ import {
   getContacts,
   getContactById,
   addContact,
+  upsertContact,
 } from '../services/contact-services.js';
 
 export const getAllContactsController = async (req, res) => {
@@ -31,14 +32,27 @@ export const getAllContactsByIdController = async (req, res, next) => {
 };
 
 export const addContactController = async (req, res) => {
-  // console.log('addContactController: ok');
-  // console.log(req.body);
-
   const data = await addContact(req.body);
 
   res.status(201).json({
     status: 201,
     message: 'Successfully created a contact!',
     data,
+  });
+};
+
+export const updateContactController = async (req, res) => {
+  const { contactId } = req.params;
+  const data = await upsertContact({ _id: contactId }, req.body, {
+    upsert: true,
+  });
+
+  const status = data.isNew ? 201 : 200;
+  const message = data.isNew ? 'Contact success add' : 'Contact update success';
+
+  res.json({
+    status,
+    message,
+    data: data.value,
   });
 };
