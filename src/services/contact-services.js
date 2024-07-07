@@ -1,4 +1,4 @@
-import { Contact } from '../db/contact.js';
+import { Contact } from '../db/models/contact.js';
 
 export const getContacts = () => Contact.find();
 
@@ -8,7 +8,8 @@ export const addContact = (data) => Contact.create(data);
 
 export const upsertContact = async (filter, data, options = {}) => {
   const result = await Contact.findOneAndUpdate(filter, data, {
-    new: true,
+    // new: true,
+    // runValidators: true,
     includeResultMetadata: true,
     ...options,
   });
