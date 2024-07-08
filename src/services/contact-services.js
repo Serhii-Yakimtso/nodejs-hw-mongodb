@@ -1,6 +1,7 @@
 import { Contact } from '../db/models/contact.js';
 import { calculatePaginationData } from '../utils/calculatePaginationData.js';
-import { SORT_ORDER } from '../constants/contacts-constants.js';
+import { SORT_ORDER } from '../constants/index.js';
+// import { contactTypeList } from '../constants/contacts-constants.js';
 
 // export const getContacts = () => Contact.find();
 export const getContacts = async ({
@@ -8,11 +9,21 @@ export const getContacts = async ({
   perPage = 10,
   sortOrder = SORT_ORDER.ASC,
   sortBy = '_id',
+  filter = {},
 }) => {
   const limit = perPage;
   const skip = (page - 1) * perPage;
 
   const contactsQuery = Contact.find();
+
+  if (filter.type) {
+    contactsQuery.where('contactType').equals(filter.type);
+  }
+
+  if (filter.isFavourite) {
+    contactsQuery.where('isFavourite').equals(filter.isFavourite);
+  }
+
   const contactsCount = await Contact.find()
     .merge(contactsQuery)
     .countDocuments();
