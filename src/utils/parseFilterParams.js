@@ -11,8 +11,9 @@ const parseContactType = (contactType) => {
 };
 
 const parseIsFavourite = (boolean) => {
-  if (!boolean) return;
-  return boolean;
+  const parseBoolean = Boolean(boolean);
+  if (!parseBoolean) return;
+  return parseBoolean;
 };
 
 export const parseFilterParams = (query) => {
