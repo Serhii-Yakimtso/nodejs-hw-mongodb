@@ -7,6 +7,7 @@ const ctrlWrapper = (controller) => {
     }
   };
 
+  // console.log('ctrlWrapper');
   return func;
 };
 

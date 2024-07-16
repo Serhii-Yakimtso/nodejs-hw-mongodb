@@ -19,5 +19,7 @@ export const validateBody = (schema) => {
       next(responseError);
     }
   };
+
+  // console.log('validateBody');
   return func;
 };
