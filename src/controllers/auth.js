@@ -1,7 +1,14 @@
 import createHttpError from 'http-errors';
-import { signup } from '../services/auth.js';
+import { signup, findUser } from '../services/auth.js';
 
 export const sighupController = async (req, res) => {
+  const { email } = req.body;
+  const user = await findUser({ email });
+
+  if (user) {
+    throw createHttpError(409, 'Email in use');
+  }
+
   const newUser = await signup(req.body);
 
   const data = {
