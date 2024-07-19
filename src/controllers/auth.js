@@ -38,4 +38,12 @@ export const signinController = async (req, res) => {
   if (!passwordCompare) {
     throw createHttpError(401, 'Email or password invalid');
   }
+
+  const accessToken = '122.4q52.44444';
+  const refreshToken = '2132.4151.33';
+
+  res.json({
+    accessToken,
+    refreshToken,
+  });
 };
