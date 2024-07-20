@@ -1,6 +1,5 @@
 import { model, Schema } from 'mongoose';
 import { mongooseSaveError, setUpdatesSettings } from './hooks.js';
-import { required } from 'joi';
 
 const sessionSchema = new Schema(
   {

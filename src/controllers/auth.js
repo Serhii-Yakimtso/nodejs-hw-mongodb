@@ -1,5 +1,5 @@
 import createHttpError from 'http-errors';
-import { signup, findUser } from '../services/auth.js';
+import { signup, findUser, createSession } from '../services/auth.js';
 import { compareHash } from '../utils/hash.js';
 
 export const signupController = async (req, res) => {
@@ -39,11 +39,23 @@ export const signinController = async (req, res) => {
     throw createHttpError(401, 'Email or password invalid');
   }
 
-  const accessToken = '122.4q52.44444';
-  const refreshToken = '2132.4151.33';
+  // const session = await createSession(user._id);
+  const { accessToken, refreshToken, _id, refreshTokenValidUntil } =
+    await createSession(user._id);
+
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    expires: refreshTokenValidUntil,
+  });
+
+  res.cookie('sessionId', _id, {
+    httpOnly: true,
+    expires: refreshTokenValidUntil,
+  });
 
   res.json({
-    accessToken,
-    refreshToken,
+    status: 200,
+    message: 'Successfully logged in an user!',
+    data: { accessToken: accessToken },
   });
 };
