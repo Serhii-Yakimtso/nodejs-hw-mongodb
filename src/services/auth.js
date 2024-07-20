@@ -7,6 +7,8 @@ import {
   REFRESH_TOKEN_LIFE_TIME,
 } from '../constants/index.js';
 
+export const findSession = (filter) => Session.findOne(filter);
+
 export const findUser = (filter) => User.findOne(filter);
 
 export const signup = async (data) => {
@@ -33,3 +35,5 @@ export const createSession = async (userId) => {
     refreshTokenValidUntil,
   });
 };
+
+export const deleteSession = (filter) => Session.deleteOne(filter);

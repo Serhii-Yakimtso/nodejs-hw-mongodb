@@ -5,20 +5,29 @@ import {
   userSignupSchema,
   userSigninSchema,
 } from '../validation/users-schemas.js';
-import { signupController, signinController } from '../controllers/auth.js';
+import {
+  signupController,
+  signinController,
+  refreshController,
+  signoutController,
+} from '../controllers/auth.js';
 
 const authRouter = Router();
 
 authRouter.post(
-  '/signup',
+  '/register',
   validateBody(userSignupSchema),
   ctrlWrapper(signupController),
 );
 
 authRouter.post(
-  '/signin',
+  '/login',
   validateBody(userSigninSchema),
   ctrlWrapper(signinController),
 );
+
+authRouter.post('/refresh', ctrlWrapper(refreshController));
+
+authRouter.post('/logout', ctrlWrapper(signoutController));
 
 export default authRouter;
