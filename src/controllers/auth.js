@@ -23,7 +23,7 @@ const setupResponseSession = (
   });
 };
 
-export const signupController = async (req, res) => {
+export const registerController = async (req, res) => {
   const { email } = req.body;
   const user = await findUser({ email });
 
@@ -45,7 +45,7 @@ export const signupController = async (req, res) => {
   });
 };
 
-export const signinController = async (req, res) => {
+export const loginController = async (req, res) => {
   const { email, password } = req.body;
 
   const user = await findUser({ email });
@@ -64,16 +64,6 @@ export const signinController = async (req, res) => {
   const session = await createSession(user._id);
 
   setupResponseSession(res, session);
-
-  // res.cookie('refreshToken', refreshToken, {
-  //   httpOnly: true,
-  //   expires: refreshTokenValidUntil,
-  // });
-
-  // res.cookie('sessionId', _id, {
-  //   httpOnly: true,
-  //   expires: refreshTokenValidUntil,
-  // });
 
   res.json({
     status: 200,
@@ -109,7 +99,7 @@ export const refreshController = async (req, res) => {
   });
 };
 
-export const signoutController = async (req, res) => {
+export const logoutController = async (req, res) => {
   const { sessionId } = req.cookies;
   if (!sessionId) {
     throw createHttpError(401, 'Session not found');
