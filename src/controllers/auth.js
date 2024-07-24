@@ -1,11 +1,15 @@
 import createHttpError from 'http-errors';
+
 import {
-  signup,
+  register,
   findUser,
   createSession,
   findSession,
   deleteSession,
+  requestResetToken,
+  resetPassword,
 } from '../services/auth.js';
+
 import { compareHash } from '../utils/hash.js';
 
 const setupResponseSession = (
@@ -31,7 +35,7 @@ export const registerController = async (req, res) => {
     throw createHttpError(409, 'Email in use');
   }
 
-  const newUser = await signup(req.body);
+  const newUser = await register(req.body);
 
   const data = {
     name: newUser.name,
@@ -111,4 +115,23 @@ export const logoutController = async (req, res) => {
   res.clearCookie('refreshToken');
 
   res.status(204).send();
+};
+
+export const requestResetEmailController = async (req, res) => {
+  await requestResetToken(req.body.email);
+  console.log('hello');
+  res.json({
+    message: 'Reset password email was successfully sent!',
+    status: 200,
+    data: {},
+  });
+};
+
+export const resetPasswordController = async (req, res) => {
+  await resetPassword(req.body);
+  res.json({
+    status: 200,
+    message: 'Password has been successfully reset.',
+    data: {},
+  });
 };

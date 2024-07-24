@@ -8,18 +8,10 @@ export const validateBody = (schema) => {
       });
       next();
     } catch (error) {
-      const responseError = createHttpError(
-        400,
-        error.message,
-
-        //   {
-        //     error: error.details,
-        //   },
-      );
+      const responseError = createHttpError(400, error.message);
       next(responseError);
     }
   };
 
-  // console.log('validateBody');
   return func;
 };

@@ -1,17 +1,26 @@
+import createHttpError from 'http-errors';
 import { randomBytes } from 'crypto';
-import User from '../db/models/user.js';
-import Session from '../db/models/session.js';
-import { hashValue } from '../utils/hash.js';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+
+import { SMTP } from '../constants/index.js';
 import {
   ACCESS_TOKEN_LIFE_TIME,
   REFRESH_TOKEN_LIFE_TIME,
 } from '../constants/index.js';
 
+import User from '../db/models/user.js';
+import Session from '../db/models/session.js';
+
+import { env } from '../utils/env.js';
+import { hashValue } from '../utils/hash.js';
+import { sendEmail } from '../utils/sendMail.js';
+
 export const findSession = (filter) => Session.findOne(filter);
 
 export const findUser = (filter) => User.findOne(filter);
 
-export const signup = async (data) => {
+export const register = async (data) => {
   const { password } = data;
   const hashPassword = await hashValue(password);
 
@@ -43,4 +52,46 @@ export const requestResetToken = async (email) => {
   if (!user) {
     throw createHttpError(404, 'User not found');
   }
+  const resetToken = jwt.sign(
+    {
+      sub: user._id,
+      email,
+    },
+    env('JWT_SECRET'),
+    {
+      expiresIn: '5m',
+    },
+  );
+
+  await sendEmail({
+    from: env(SMTP.SMTP_FROM),
+    to: email,
+    subject: 'Reset your password',
+    html: `<p>Click <a target="_blank" href="${env(
+      'APP_DOMAIN',
+    )}/auth/reset-password?token=${resetToken}">here</a> to reset your password!</p>`,
+  });
+};
+
+export const resetPassword = async (payload) => {
+  let entries;
+
+  try {
+    entries = jwt.verify(payload.token, env('JWT_SECRET'));
+  } catch (error) {
+    if (error instanceof Error) throw createHttpError(401, error.message);
+  }
+
+  const user = await User.findOne({
+    email: entries.email,
+    _id: entries.sub,
+  });
+
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+
+  const encryptedPassword = await bcrypt.hash(payload.password, 10);
+
+  await User.updateOne({ _id: user._id }, { password: encryptedPassword });
 };
