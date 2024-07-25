@@ -1,4 +1,5 @@
 import createHttpError from 'http-errors';
+
 import {
   getContacts,
   getContact,
@@ -6,9 +7,12 @@ import {
   upsertContact,
   deleteContact,
 } from '../services/contact-services.js';
+
+import { parseFilterParams } from '../utils/parseFilterParams.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
-import { parseFilterParams } from '../utils/parseFilterParams.js';
+
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
 
 export const getAllContactsController = async (req, res) => {
   const { _id: userId } = req.user;
@@ -83,7 +87,22 @@ export const patchContactController = async (req, res) => {
   const { _id: userId } = req.user;
 
   const { contactId } = req.params;
-  const result = await upsertContact({ _id: contactId, userId }, req.body);
+
+  const photo = req.file;
+
+  let photoUrl;
+
+  if (photo) {
+    photoUrl = await saveFileToUploadDir(photo);
+  }
+
+  const result = await upsertContact(
+    { _id: contactId, userId },
+    {
+      ...req.body,
+      photo: photoUrl,
+    },
+  );
 
   if (!result) {
     throw createHttpError(404, `Contact with id ${contactId} not found`);
@@ -95,6 +114,17 @@ export const patchContactController = async (req, res) => {
     data: result.data,
   });
 };
+
+//   /*{
+// 		  fieldname: 'photo',
+// 		  originalname: 'download.jpeg',
+// 		  encoding: '7bit',
+// 		  mimetype: 'image/jpeg',
+// 		  destination: '/Users/borysmeshkov/Projects/goit-study/students-app/temp',
+// 		  filename: '1710709919677_download.jpeg',
+// 		  path: '/Users/borysmeshkov/Projects/goit-study/students-app/temp/1710709919677_download.jpeg',
+// 		  size: 7
+// 	  }*/
 
 export const deleteContactController = async (req, res) => {
   const { _id: userId } = req.user;
